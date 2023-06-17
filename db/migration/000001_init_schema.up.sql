@@ -13,7 +13,7 @@ CREATE TABLE "entries" (
   "created_at" timestamptz NOT NULL DEFAULT (now())
 );
 
-CREATE TABLE "Transfers" (
+CREATE TABLE "transfers" (
   "id" bigserial PRIMARY KEY,
   "from_accound_id" bigint NOT NULL,
   "to_accound_id" bigint NOT NULL,
@@ -25,19 +25,18 @@ CREATE INDEX ON "account" ("owner");
 
 CREATE INDEX ON "entries" ("account_id");
 
-CREATE INDEX ON "Transfers" ("from_accound_id");
+CREATE INDEX ON "transfers" ("from_accound_id");
 
-CREATE INDEX ON "Transfers" ("to_accound_id");
+CREATE INDEX ON "transfers" ("to_accound_id");
 
-CREATE INDEX ON "Transfers" ("from_accound_id", "to_accound_id");
+CREATE INDEX ON "transfers" ("from_accound_id", "to_accound_id");
 
 COMMENT ON COLUMN "entries"."amount" IS 'can be postive or negative';
 
-COMMENT ON COLUMN "Transfers"."amount" IS 'must be positive';
+COMMENT ON COLUMN "transfers"."amount" IS 'must be positive';
 
 ALTER TABLE "entries" ADD FOREIGN KEY ("account_id") REFERENCES "account" ("id");
 
-ALTER TABLE "Transfers" ADD FOREIGN KEY ("from_accound_id") REFERENCES "account" ("id");
+ALTER TABLE "transfers" ADD FOREIGN KEY ("from_accound_id") REFERENCES "account" ("id");
 
-ALTER TABLE "Transfers" ADD FOREIGN KEY ("to_accound_id") REFERENCES "account" ("id");
-
+ALTER TABLE "transfers" ADD FOREIGN KEY ("to_accound_id") REFERENCES "account" ("id");
