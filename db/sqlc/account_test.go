@@ -71,7 +71,7 @@ func TestUpdateAccount(t *testing.T) {
 	require.Equal(t, arg.Balance, account2.Balance)
 }
 
-func TestListAccount(t *testing.T) {
+func TestListAccounts(t *testing.T) {
 
 	for i := 0; i < 10; i++ {
 		CreateRandomAccount(t)
