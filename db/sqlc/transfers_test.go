@@ -12,8 +12,8 @@ import (
 func CreateRandomTransfer(t *testing.T, account1, account2 Account) Transfer {
 
 	arg := CreateTransferParams{
-		FromAccoundID: account1.ID,
-		ToAccoundID:   account2.ID,
+		FromAccountID: account1.ID,
+		ToAccountID:   account2.ID,
 		Amount:        util.RandomBalance(),
 	}
 
@@ -25,8 +25,7 @@ func CreateRandomTransfer(t *testing.T, account1, account2 Account) Transfer {
 	require.NotZero(t, transfer.ID)
 	require.NotZero(t, transfer.CreatedAt)
 	require.Equal(t, transfer.FromAccountID, arg.FromAccountID)
-	require.Equal(t, transfer.ToAccount
-		ID, arg.ToAccountID)
+	require.Equal(t, transfer.ToAccountID, arg.ToAccountID)
 	require.Equal(t, transfer.Amount, arg.Amount)
 
 	return transfer
@@ -52,14 +51,14 @@ func TestGetTransfer(t *testing.T) {
 	require.NoError(t, err)
 	require.NotEmpty(t, transfer2)
 	require.Equal(t, transfer1.ID, transfer2.ID)
-	require.Equal(t, transfer1.FromAccountID, transfer2.FromAccoundtD)
+	require.Equal(t, transfer1.FromAccountID, transfer2.FromAccountID)
 	require.Equal(t, transfer1.ToAccountID, transfer2.ToAccountID)
 	require.Equal(t, transfer1.Amount, transfer2.Amount)
 	require.Equal(t, transfer1.CreatedAt, transfer2.CreatedAt, time.Second)
 
 }
 
-func TestListTransfer(t *testing.T) {
+func TestListTransfers(t *testing.T) {
 
 	account1 := CreateRandomAccount(t)
 	account2 := CreateRandomAccount(t)
@@ -70,7 +69,7 @@ func TestListTransfer(t *testing.T) {
 	}
 	arg := ListTransfersParams{
 		FromAccountID: account1.ID,
-		ToAccoundID:   account1.ID,
+		ToAccountID:   account1.ID,
 		Limit:         3,
 		Offset:        2,
 	}
