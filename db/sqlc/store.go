@@ -20,7 +20,7 @@ func NewStore(db *sql.DB) *Store {
 	}
 }
 
-func (store *Store) execTx(ctx context.Context, fn func(*Queries) error) error {
+func (store *Store) execTx(ctx context.Context, callback func(*Queries) error) error {
 
 	tx, err := store.db.BeginTx(ctx, nil)
 
@@ -29,7 +29,7 @@ func (store *Store) execTx(ctx context.Context, fn func(*Queries) error) error {
 	}
 
 	q := New(tx)
-	err = fn(q)
+	err = callback(q)
 	if err != nil {
 		rbErr := tx.Rollback()
 		if rbErr != nil {
@@ -84,7 +84,7 @@ func (store *Store) TransferTx(ctx context.Context, arg TransferTxParams) (Trans
 			return err
 		}
 		result.ToEntry, err = q.CreateEntry(ctx, CreateEntryParams{
-			AccountID: arg.FromAccountID,
+			AccountID: arg.ToAccountID,
 			Amount:    arg.Amount,
 		})
 		if err != nil {
