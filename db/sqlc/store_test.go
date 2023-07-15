@@ -86,11 +86,23 @@ func TestTransferTx(t *testing.T) {
 		require.NotZero(t, toEntry.CreatedAt)
 		require.NotEmpty(t, toEntry.ID)
 
-		//to check the FromEntry data is created or not... we will use GetEntry()
+		//to check the ToEntry data is created or not... we will use GetEntry()
 
 		crtdTo_entry, err := store.GetEntry(context.Background(), toEntry.ID)
 		require.NotEmpty(t, crtdTo_entry)
 		require.NoError(t, err)
+
+		//checking accounts
+
+		fromAccount := result.FromAccount
+
+		require.NotEmpty(t, fromAccount)
+		require.Equal(t, account1.ID, fromAccount.ID)
+
+		toAccount := result.ToAccount
+
+		require.NotEmpty(t, toAccount)
+		require.Equal(t, account2.ID, toAccount.ID)
 
 	}
 
