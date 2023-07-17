@@ -2,6 +2,8 @@ package db
 
 import (
 	"context"
+	"fmt"
+	"runtime"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -13,6 +15,9 @@ func TestTransferTx(t *testing.T) {
 
 	account1 := CreateRandomAccount(t)
 	account2 := CreateRandomAccount(t)
+
+	fmt.Println("Go-routines:", runtime.NumGoroutine())
+	fmt.Println(">>before tx:", account1.Balance, " and ", account2.Balance)
 
 	//run n cuncurrent transfer transactions
 
@@ -35,10 +40,13 @@ func TestTransferTx(t *testing.T) {
 			results <- result
 
 		}()
+		fmt.Println("Go-routines:", runtime.NumGoroutine())
+
 	}
+	fmt.Println("Go-routines:", runtime.NumGoroutine())
 
 	// check results
-
+	existed := make(map[int]bool)
 	for i := 0; i < n; i++ {
 
 		err := <-errs
@@ -95,15 +103,37 @@ func TestTransferTx(t *testing.T) {
 		//checking accounts
 
 		fromAccount := result.FromAccount
-
 		require.NotEmpty(t, fromAccount)
 		require.Equal(t, account1.ID, fromAccount.ID)
 
 		toAccount := result.ToAccount
-
 		require.NotEmpty(t, toAccount)
 		require.Equal(t, account2.ID, toAccount.ID)
 
+		//check accounts balance
+		fmt.Println(">> tx:", fromAccount.Balance, " and ", toAccount.Balance)
+		diff1 := account1.Balance - fromAccount.Balance
+		diff2 := toAccount.Balance - account2.Balance
+		require.Equal(t, diff1, diff2)
+		require.True(t, diff1 > 0)
+		require.True(t, diff1%amount == 0) //amount. 2*amount. 3*amount, ..., n*amount
+
+		k := int(diff1 / amount)
+
+		require.True(t, k >= 1 && k <= n) //in order to check this we have used "existed" var
+		existed[k] = true
+
+		// check the final updated balance of two accounts
+
+		updatedAccount1, err := store.GetAccount(context.Background(), account1.ID)
+		require.NoError(t, err)
+		updatedAccount2, err := store.GetAccount(context.Background(), account2.ID)
+		require.NoError(t, err)
+
+		require.Equal(t, account1.Balance-int64(n)*amount, updatedAccount1.Balance)
+		require.Equal(t, account1.Balance+int64(n)*amount, updatedAccount2.Balance)
+
+		fmt.Println(">> tx:", fromAccount.Balance, " and ", toAccount.Balance)
 	}
 
 }
