@@ -20,7 +20,6 @@ func TestTransferTx(t *testing.T) {
 	fmt.Println(">>before tx:", account1.Balance, " and ", account2.Balance)
 
 	//run n cuncurrent transfer transactions
-
 	n := 5
 
 	amount := int64(10)
@@ -113,28 +112,28 @@ func TestTransferTx(t *testing.T) {
 		require.Equal(t, account2.ID, toAccount.ID)
 
 		//check accounts balance
-		fmt.Println(">> tx:", fromAccount.Balance, " and ", toAccount.Balance)
+		fmt.Println("  >> tx:", fromAccount.Balance, " and ", toAccount.Balance)
 		diff1 := account1.Balance - fromAccount.Balance
 		diff2 := toAccount.Balance - account2.Balance
 		require.Equal(t, diff1, diff2)
 		require.True(t, diff1 > 0)
-		require.True(t, diff1%amount == 0) //amount. 2*amount. 3*amount, ..., n*amount
+		require.True(t, diff1%amount == 0) //1*amount, 2*amount, 3*amount, ..., n*amount
 
 		k := int(diff1 / amount)
 
 		require.True(t, k >= 1 && k <= n) //in order to check this we have used "existed" var
 		existed[k] = true
-
-		// check the final updated balance of two accounts
-
-		updatedAccount1, err := store.GetAccount(context.Background(), account1.ID)
-		require.NoError(t, err)
-		updatedAccount2, err := store.GetAccount(context.Background(), account2.ID)
-		require.NoError(t, err)
-		require.Equal(t, account1.Balance-int64(2)*amount, updatedAccount1.Balance)
-		require.Equal(t, account2.Balance+int64(2)*amount, updatedAccount2.Balance)
-
-		fmt.Println(">> tx:", fromAccount.Balance, " and ", toAccount.Balance)
 	}
+
+	// check the final updated balance of two accounts
+
+	updatedAccount1, err := store.GetAccount(context.Background(), account1.ID)
+	require.NoError(t, err)
+	updatedAccount2, err := store.GetAccount(context.Background(), account2.ID)
+	require.NoError(t, err)
+
+	fmt.Println(">> after tx:", updatedAccount1.Balance, " and ", updatedAccount2.Balance)
+	require.Equal(t, account1.Balance-int64(n)*amount, updatedAccount1.Balance)
+	require.Equal(t, account2.Balance+int64(n)*amount, updatedAccount2.Balance)
 
 }
