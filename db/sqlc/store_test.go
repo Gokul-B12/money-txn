@@ -21,7 +21,7 @@ func TestTransferTx(t *testing.T) {
 
 	//run n cuncurrent transfer transactions
 
-	n := 2
+	n := 5
 
 	amount := int64(10)
 
@@ -29,10 +29,10 @@ func TestTransferTx(t *testing.T) {
 	results := make(chan TransferTxResult)
 
 	for i := 0; i < n; i++ {
-		txName := fmt.Sprintf("tx %d ", i+1)
+		//txName := fmt.Sprintf("tx %d ", i+1)
 		go func() {
-			ctx := context.WithValue(context.Background(), txKey, txName)
-			result, err := store.TransferTx(ctx, TransferTxParams{
+			//ctx := context.WithValue(context.Background(), txKey, txName)
+			result, err := store.TransferTx(context.Background(), TransferTxParams{
 				FromAccountID: account1.ID,
 				ToAccountID:   account2.ID,
 				Amount:        amount,
@@ -42,10 +42,10 @@ func TestTransferTx(t *testing.T) {
 			results <- result
 
 		}()
-		fmt.Println("Go-routines:", runtime.NumGoroutine())
+		//fmt.Println("Go-routines:", runtime.NumGoroutine())
 
 	}
-	fmt.Println("Go-routines:", runtime.NumGoroutine())
+	//fmt.Println("Go-routines:", runtime.NumGoroutine())
 
 	// check results
 	existed := make(map[int]bool)
@@ -131,9 +131,8 @@ func TestTransferTx(t *testing.T) {
 		require.NoError(t, err)
 		updatedAccount2, err := store.GetAccount(context.Background(), account2.ID)
 		require.NoError(t, err)
-
-		require.Equal(t, account1.Balance-int64(n)*amount, updatedAccount1.Balance)
-		require.Equal(t, account2.Balance+int64(n)*amount, updatedAccount2.Balance)
+		require.Equal(t, account1.Balance-int64(2)*amount, updatedAccount1.Balance)
+		require.Equal(t, account2.Balance+int64(2)*amount, updatedAccount2.Balance)
 
 		fmt.Println(">> tx:", fromAccount.Balance, " and ", toAccount.Balance)
 	}
