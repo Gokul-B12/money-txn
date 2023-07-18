@@ -133,7 +133,7 @@ func TestTransferTx(t *testing.T) {
 		require.NoError(t, err)
 
 		require.Equal(t, account1.Balance-int64(n)*amount, updatedAccount1.Balance)
-		require.Equal(t, account1.Balance+int64(n)*amount, updatedAccount2.Balance)
+		require.Equal(t, account2.Balance+int64(n)*amount, updatedAccount2.Balance)
 
 		fmt.Println(">> tx:", fromAccount.Balance, " and ", toAccount.Balance)
 	}
