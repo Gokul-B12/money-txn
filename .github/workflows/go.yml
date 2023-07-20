@@ -17,7 +17,7 @@ jobs:
         # Label used to access the service container
         postgres:
           # Docker Hub image
-          image: postgres
+          image: postgres:12
           # Provide the password for postgres
           env:
             POSTGRES_PASSWORD: admin
@@ -39,7 +39,7 @@ jobs:
       uses: actions/setup-go@v4
       with:
         go-version: '1.20'
-        
+
     - name: Build
       run: go build -v ./...
 
