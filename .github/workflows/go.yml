@@ -42,7 +42,7 @@ jobs:
     
     - name: installing migrate to perform migration steps
       run: |
-        wget -L https://github.com/golang-migrate/migrate/releases/download/v4.16.2/migrate.linux-amd64.tar.gz | tar xvz
+        wget -L https://github.com/golang-migrate/migrate/releases/download/v4.16.2/migrate.linux-amd64.tar.gz | tar xvfz
         sudo mv migrate.linux-amd64.tar.gz /usr/bin
 
     - name: migrating db schema
