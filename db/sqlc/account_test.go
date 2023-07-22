@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Gokul-B12/simplebank/util"
+	"github.com/Gokul-B12/money-txn/util"
 
 	"github.com/stretchr/testify/require"
 )

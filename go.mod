@@ -1,4 +1,4 @@
-module github.com/Gokul-B12/simplebank
+module github.com/Gokul-B12/money-txn
 
 go 1.20
 
