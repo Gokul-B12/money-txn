@@ -8,23 +8,23 @@ import (
 )
 
 type createAccountRequest struct {
-	Owner    string `json:"owner" binding: "required"`
-	Currency string `json:"currency" binding: "required, oneof= USD EUR"`
+	Owner    string `json:"owner" binding:"required"`
+	Currency string `json:"currency" binding:"required,oneof= USD EUR INR"`
 	//Balance  int64  `json:"balance"`          //when creating new acc.. bal is 0
 }
 
 func (server *Server) createAccount(ctx *gin.Context) {
 	var req createAccountRequest
 
-	if err := ctx.ShouldBindJSON(req); err != nil {
+	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
 
 	arg := db.CreateAccountParams{
 		Owner:    req.Owner,
-		Balance:  0,
 		Currency: req.Currency,
+		Balance:  0,
 	}
 
 	account, err := server.store.CreateAccount(ctx, arg)
