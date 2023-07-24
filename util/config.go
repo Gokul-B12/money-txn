@@ -3,15 +3,15 @@ package util
 import "github.com/spf13/viper"
 
 type Config struct {
-	DBDriver      string `mapstructure:"dbdriver"`
-	DBSource      string `mapstructure:"dbsource"`
-	ServerAddress string `mapstructure:"serveraddress"`
+	DBDriver      string `mapstructure:"DB_DRIVER"`
+	DBSource      string `mapstructure:"DB_SOURCE"`
+	ServerAddress string `mapstructure:"SERVER_ADDRESS"`
 }
 
 func LoadConfig(path string) (config Config, err error) {
 	viper.AddConfigPath(path)
 	viper.SetConfigName("app")
-	viper.SetConfigFile("env")
+	viper.SetConfigType("env")
 
 	viper.AutomaticEnv()
 
