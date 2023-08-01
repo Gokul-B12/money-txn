@@ -13,11 +13,12 @@ import (
 	mockdb "github.com/Gokul-B12/money-txn/db/mock"
 	db "github.com/Gokul-B12/money-txn/db/sqlc"
 	"github.com/Gokul-B12/money-txn/util"
+	"github.com/gin-gonic/gin"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
 )
 
-func TestGetAccount(t *testing.T) {
+func TestGetAccountAPI(t *testing.T) {
 	//creating acc
 	account := randomAccount()
 
@@ -111,6 +112,47 @@ func TestGetAccount(t *testing.T) {
 
 	}
 }
+
+func TestCreateAccountAPI(t *testing.T) {
+
+	account := randomAccount()
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockStore := mockdb.NewMockStore(ctrl)
+
+	arg := db.CreateAccountParams{
+		Owner:    account.Owner,
+		Currency: account.Currency,
+		Balance:  0,
+	}
+
+	mockStore.
+		EXPECT().
+		CreateAccount(gomock.Any(), gomock.Eq(arg)).
+		Times(1).
+		Return(account, nil)
+
+	server := NewServer(mockStore)
+
+	recorder := httptest.NewRecorder()
+
+	url := "/accounts"
+	body := gin.H{
+		"Owner":    account.Owner,
+		"Currency": account.Currency,
+	}
+	data, err := json.Marshal(body)
+	require.NoError(t, err)
+	request, err := http.NewRequest(http.MethodPost, url, bytes.NewReader(data))
+	require.NoError(t, err)
+
+	server.router.ServeHTTP(recorder, request)
+	require.Equal(t, http.StatusOK, recorder.Code)
+
+}
+
 func randomAccount() db.Account {
 	return db.Account{
 		ID:       util.RandomInt(1, 1000),
