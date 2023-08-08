@@ -284,9 +284,9 @@ func TestListAccountsAPI(t *testing.T) {
 				mockStore.EXPECT().
 					ListAccounts(gomock.Any(), gomock.Eq(arg)).
 					Times(1).
-					//Return([]db.Account{}, sql.ErrConnDone)
-					//or
-					Return(nil, sql.ErrConnDone)
+					Return([]db.Account{}, sql.ErrConnDone)
+				//or
+				//Return(nil, sql.ErrConnDone)
 			},
 			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
 				require.Equal(t, recorder.Code, http.StatusInternalServerError)
