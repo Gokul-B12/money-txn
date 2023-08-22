@@ -207,7 +207,7 @@ func TestCreateUserAPI(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			mockStore := mockdb.NewMockStore(ctrl)
 
-			server := NewServer(mockStore)
+			server := newTestServer(t, mockStore)
 
 			//after creating mockSore and server, we will create stub
 
