@@ -2,10 +2,12 @@ package api
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"net/http"
 
 	db "github.com/Gokul-B12/money-txn/db/sqlc"
+	"github.com/Gokul-B12/money-txn/token"
 	"github.com/gin-gonic/gin"
 )
 
@@ -24,11 +26,23 @@ func (server *Server) createTransfer(ctx *gin.Context) {
 		return
 	}
 
-	if !server.validAccount(ctx, req.FromAccountID, req.Currency) {
+	fromAccount, valid := server.validAccount(ctx, req.FromAccountID, req.Currency)
+
+	if !valid {
 		return
 	}
-	if !server.validAccount(ctx, req.ToAccountID, req.Currency) {
+
+	//we dont want what or who the toaccount is.. so we declared blank identifier
+	_, valid = server.validAccount(ctx, req.ToAccountID, req.Currency)
+	if !valid {
 		return
+	}
+
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
+
+	if fromAccount.Owner != authPayload.Username {
+		err := errors.New("from_account does not belog to authenticated user")
+		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
 	}
 
 	arg := db.TransferTxParams{
@@ -49,23 +63,23 @@ func (server *Server) createTransfer(ctx *gin.Context) {
 }
 
 // we havent validated the currency parameter .. the currency type for from and to account should be same. to chekc this im creating below funciton.
-func (server *Server) validAccount(ctx *gin.Context, accountID int64, currency string) bool {
+func (server *Server) validAccount(ctx *gin.Context, accountID int64, currency string) (db.Account, bool) {
 	account, err := server.store.GetAccount(ctx, accountID)
 
 	if err != nil {
 		if err == sql.ErrNoRows {
 			ctx.JSON(http.StatusNotFound, errorResponse(err))
-			return false
+			return account, false
 		}
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
-		return false
+		return account, false
 	}
 
 	if account.Currency != currency {
 		err := fmt.Errorf(" Account [%d] of currency [%s] is not matching with input currency [%s]", accountID, account.Currency, currency)
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
-		return false
+		return account, false
 	} else {
-		return true
+		return account, true
 	}
 }
