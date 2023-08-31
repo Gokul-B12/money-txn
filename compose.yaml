@@ -1,0 +1,14 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_USER=root
+      - POSTGRES_DB=simple_bank
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
