@@ -10,14 +10,15 @@ RUN tar xvfz migrate.linux-amd64.tar.gz
 
 #Run stage
 #below image is the linux alpine image(lightweight img)
-FROM alpine:3.17
+FROM alpine
 WORKDIR /app
 # . refers to working dir in the base image which is /app here.
 COPY --from=builder /app/main .
 COPY --from=builder /app/migrate .
-COPY ./db/migration/ /app/migration/
 COPY app.env .
-COPY start.sh .       
+COPY db/migration/ ./migration/
+COPY start.sh .
+COPY wait-for.sh .       
 EXPOSE 8080
 CMD ["/app/main"]
 #below cmd is to frst execute the start.sh(to migrate db up) and start app
