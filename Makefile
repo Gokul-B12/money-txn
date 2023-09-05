@@ -6,7 +6,7 @@ dropdb:
 
 
 postgres:
-	docker run --name postgres23 -p 5432:5432  -e POSTGRES_USER=root -e POSTGRES_PASSWORD=admin -d postgres:15-alpine
+	docker run --name postgres23 -- network bank-network -p 5432:5432  -e POSTGRES_USER=root -e POSTGRES_PASSWORD=admin -d postgres:15-alpine
 
 migrateup:
 	migrate -path ./db/migration/ -database "postgresql://root:admin@34.206.16.110:5432/simple_bank?sslmode=disable" -verbose up
