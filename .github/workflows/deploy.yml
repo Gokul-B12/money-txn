@@ -25,6 +25,9 @@ jobs:
       uses: aws-actions/amazon-ecr-login@v1
       with:
        mask-password: 'true'
+      
+    - name: Checkout repo                             #this step is added because we got Dockerfile not found error. So, we need to checkout the code.
+      uses: actions/checkout@v3
 
     - name: Build, tag, and push docker image to Amazon ECR
       env:
