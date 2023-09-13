@@ -3,8 +3,7 @@ name: Deployment to production
 on:
   push:
     branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+
 
 jobs:
 
@@ -25,6 +24,9 @@ jobs:
       uses: aws-actions/amazon-ecr-login@v1
       with:
        mask-password: 'true'
+
+    - name: Load secrets from AWS to app.env 
+      run: aws secretsmanager get-secret-value --secret-id money_txn --query SecretString --output text | jq -r 'to_entries | map ("\(.key)=\(.value)")|.[]'
       
     - name: Checkout repo                             #this step is added because we got Dockerfile not found error. So, we need to checkout the code.
       uses: actions/checkout@v3
