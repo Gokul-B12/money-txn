@@ -11,6 +11,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Checkout repo                             #this step is added because we got Dockerfile not found error. So, we need to checkout the code.
+      uses: actions/checkout@v3
+
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v3 # More information on this action can be found below in the 'AWS Credentials' section
       
@@ -28,9 +31,7 @@ jobs:
     - name: Load secrets from AWS to app.env 
       run: aws secretsmanager get-secret-value --secret-id money_txn --query SecretString --output text | jq -r 'to_entries | map ("\(.key)=\(.value)")|.[]' > app.env
       
-    - name: Checkout repo                             #this step is added because we got Dockerfile not found error. So, we need to checkout the code.
-      uses: actions/checkout@v3
-
+    
     - name: Build, tag, and push docker image to Amazon ECR
       env:
        REGISTRY: ${{ steps.login-ecr.outputs.registry }}
