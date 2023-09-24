@@ -1,0 +1,8 @@
+apiVersion: v1
+data:
+  mapUsers: |
+    - groups:
+      - system:masters
+      userarn: arn:aws:iam::793533274395:user/TS-github-ci
+      username: TS-github-ci
+    
