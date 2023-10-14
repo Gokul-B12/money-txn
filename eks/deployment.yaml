@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:                             #metadata for deployment object
+  name: money-txn-api-deploy
+  labels:
+    app: money-txn-api
+spec:                                 #specification for deployment
+  replicas: 1
+  selector:
+    matchLabels:
+      app: money-txn-api
+  template:                          #template for pods
+    metadata:
+      labels:
+        app: money-txn-api
+    spec:                            #specification for pods
+      containers:
+      - name: money-txn-api
+        image: 793533274395.dkr.ecr.us-east-1.amazonaws.com/money-txn:53d53a1c9584625860d040fce58abba3409be78b
+        ports:
+        - containerPort: 8080        #This is the port that the container will expose to the network.
