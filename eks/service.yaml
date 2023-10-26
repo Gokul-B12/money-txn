@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: money-txn-api-service
+spec:
+  selector:
+    app: money-txn-api                             #copy the app label from the pod template in deployment.yaml file
+  ports:
+    - protocol: TCP
+      port: 80                                    #service will listen to incoming requests in port 80
+      targetPort: 8080                            #containers exposed port(check in deployment.yaml file)
+  type: ClusterIP
