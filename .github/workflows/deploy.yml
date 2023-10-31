@@ -47,6 +47,9 @@ jobs:
         docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -t $REGISTRY/$REPOSITORY:latest .
         docker push -a $REGISTRY/$REPOSITORY
 
+    - name: Update kube config       #update kubeconfig to point to the production cluster.
+      run: aws eks update-kubeconfig --name money-txn --region us-east-1
+
     - name: Deploy ECR image to Amazon EKS
       run: |
         kubectl apply -f eks\aws-auth.yaml
