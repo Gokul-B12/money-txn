@@ -16,6 +16,7 @@ spec:                                 #specification for deployment
     spec:                            #specification for pods
       containers:
       - name: money-txn-api
-        image: 793533274395.dkr.ecr.us-east-1.amazonaws.com/money-txn:53d53a1c9584625860d040fce58abba3409be78b
+        image: 793533274395.dkr.ecr.us-east-1.amazonaws.com/money-txn:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 8080        #This is the port that the container will expose to the network.
