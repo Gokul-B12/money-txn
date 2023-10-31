@@ -9,6 +9,8 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: money-txn-ingress
+  annotations: 
+    cert-manager.io/cluster-issuer: letsencrypt      
 spec:
   ingressClassName: nginx
   rules:
@@ -22,4 +24,8 @@ spec:
             name: money-txn-api-service
             port:
               number: 80                      #defined in the service.yaml
+  tls:
+  - hosts: 
+    - api.nextturn.net
+    secretName: money-txn-api-cert  
 
